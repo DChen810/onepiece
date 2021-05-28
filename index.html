@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>热血航线抽卡模拟器</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/ui.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="row" align="center">
+                <div class="col-lg-12 col-md-12"><h2>热血航线抽卡模拟器</h2></div>
+                <div class="col-lg-12 col-md-12"><h3> <font size="3" color="#ADADAD">制作：1351木叶野兽</h3></div>
+            </div>
+
+            <div class="row" align="center">
+                <div id="carousel-switch" class="carousel slide" 
+                    data-interval="false" data-ride="carousel" style="width:800px">
+                    <!-- Indicators -->
+                    
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active" data-pool="event_20160411">
+                            <img src="img/banners/normal_card.png" alt="普通池" />
+        
+                        </div>
+                        
+                    </div>
+                    <!-- Controls -->
+                    <a class="carousel-control left" href="#carousel-switch" role="button" data-slide="prev">
+                        <span>
+                            <img src="img/ui/left_btn.png" style="padding-top:110px;padding-right:58px;"/>
+                        </span>
+                        <span class="sr-only">上一个</span>
+                    </a>
+                    <a class="carousel-control right" href="#carousel-switch" role="button" data-slide="next">
+                        <span>
+                            <img src="img/ui/right_btn.png" style="padding-top:110px;padding-left:60px;"/>
+                        </span>
+                        <span class="sr-only">下一个</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row"  align="center">
+                <div class="col-md-4">
+                    <img id="ico_saint_quartz" src="img/ui/saint_quartz.png" width="32" height="32" />
+                    <span id="saint_quartz"></span>
+                    <div id="tooltip" class="tip"></div>
+                    <div id="saint_quartz_box" style="display: none">
+                        免费幻果：<span id="saint_quartz_free"></span><br/>
+                        付费幻果：<span id="saint_quartz_premium"></span>
+                    </div>
+                </div>
+                <div class="col-md-2"><button id="btn-buy-648" class="btn btn-default">氪一单</button></div>
+                <div class="col-md-2"><button id="btn-buy-6480" class="btn btn-default">氪十单</button></div>
+                <div class="col-md-4">人民币消耗量：<span id="rmb_cost"></span></div>
+            </div>
+
+
+            <div class="row"  align="center">
+                <div class="col-lg-12" align="center">
+                    <canvas id="cards-canvas" width="1016" height="574">
+                        当前浏览器不支持&lt;canvas&gt;标签
+                    </canvas>
+                </div>
+            </div>
+
+            <div class="row"  align="center">
+                <!-- <div class="col-md-3"><button id="btn-" class="btn btn-default">召唤一次</button></div> -->
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3"><button id="btn-draw-timesten" class="btn"></button></div>
+            </div>
+
+            <div class="row"  align="center">
+                <div class="col-md-12"></div>
+            </div>
+
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <span id="tag-history">出货历史：<span id="summon_counter"></span></span>
+                    <button id="btn-history-clear" class="btn btn-warning pull-right">清空历史纪录</button>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">特级战意卡<span id="p_servant_ssr"></span></div>
+                <div class="panel-body" id="servant_ssr_list">
+                </div>
+            </div>
+
+            
+
+            
+            
+
+            <div class="row">
+                <img id="background" src="img/background.png" alt=""style="display:none"/>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" src="js/data.js"></script>
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/drawing.js"></script>
+
+        <script type="text/javascript">
+            function updateProbability() {
+                var rate;
+
+                if (window.summonCounter > 0)
+                {
+                    rate = 100 * $('#servant_ssr_list').children().length / window.summonCounter;
+                    $('span#p_servant_ssr').text("（出货率：" + rate + "%）");
+
+                    rate = 100 * $('#craft_essence_ssr_list').children().length / window.summonCounter;
+                    $('span#p_craft_essence_ssr').text("（出货率：" + rate + "%）");
+
+                    rate = 100 * $('#servant_sr_list').children().length / window.summonCounter;
+                    $('span#p_servant_sr').text("（出货率：" + rate + "%）");
+
+                    rate = 100 * $('#craft_essence_sr_list').children().length / window.summonCounter;
+                    $('span#p_craft_essence_sr').text("（出货率：" + rate + "%）");
+                }
+                else
+                {
+                    
+                }
+            }
+
+            function updateSaintQuartz() {
+                $('span#saint_quartz_free').text(window.window.saintQuartzFree);
+                $('span#saint_quartz_premium').text(window.window.saintQuartzPremium);
+                $('span#saint_quartz').text(window.window.saintQuartzFree + window.window.saintQuartzPremium);
+            }
+
+            function costSaintQuartz(amount) {
+                if (window.window.saintQuartzFree + window.window.saintQuartzPremium < amount)
+                    return false;
+                var freeSaintQuartzLeft = window.window.saintQuartzFree - amount;
+                if (freeSaintQuartzLeft >= 0)
+                {
+                    window.window.saintQuartzFree = freeSaintQuartzLeft;
+                }
+                else
+                {
+                    window.window.saintQuartzFree = 0;
+                    window.window.saintQuartzPremium += freeSaintQuartzLeft;
+                }
+                updateSaintQuartz();
+                return true;
+            }
+
+            $('#btn-buy-648').click(function() {
+                // window.saintQuartz += 0;
+                window.saintQuartzFree += 0;
+                window.saintQuartzPremium += 6480;
+                // $('span#saint_quartz').text(window.saintQuartz);
+                updateSaintQuartz();
+
+                window.rmbCost += 648;
+                $('span#rmb_cost').text(window.rmbCost);
+            });
+
+            $('#btn-buy-6480').click(function() {
+                // window.saintQuartz += 1400;
+                window.saintQuartzFree += 0;
+                window.saintQuartzPremium += 64800;
+                // $('span#saint_quartz').text(window.saintQuartz);
+                updateSaintQuartz();
+
+                window.rmbCost += 6480;
+                $('span#rmb_cost').text(window.rmbCost);
+            });
+
+            
+
+            $('#btn-draw-timesten').click(function(){
+                // if (window.saintQuartz < 30) {
+                //     alert("幻果不足！");
+                //     return;
+                // }
+                // window.saintQuartz -= 30;
+                // $('span#saint_quartz').text(window.saintQuartz);
+                var result = costSaintQuartz(1000);
+                if (!result) {
+                    alert("幻果不足！");
+                    return;
+                }
+
+                window.summonCounter += 5;
+                $('span#summon_counter').text(window.summonCounter);
+
+                var cards = summon10combo(window.pool);
+
+                for (var i=0; i<cards.length; i++)
+                {
+                    var x = Math.floor(i % 6);
+                    var y = Math.floor(i / 6);
+                    if (y == 1) x += 1;
+                    var card = cards[i];
+                    drawCombo(card, x, y);
+                }
+
+                updateProbability();
+            });
+
+            $('#btn-history-clear').click(function(){
+                window.summonCounter = 0;
+                $('#servant_ssr_list').empty();
+                $('#craft_essence_ssr_list').empty();
+                $('#servant_sr_list').empty();
+                $('#craft_essence_sr_list').empty();
+
+                $('span#summon_counter').text(window.summonCounter);
+                updateProbability();
+            });
+
+            //hover某处显示悬浮框
+            $("#ico_saint_quartz").mouseover(function(e){
+                $('#saint_quartz_free').text(window.saintQuartzFree);
+                $('#saint_quartz_premium').text(window.saintQuartzPremium);
+                $('#saint_quartz_box').css("display", "block");
+            });
+
+            //鼠标离开表格隐藏悬浮框
+            $("#ico_saint_quartz").mouseout(function(){
+                $('#saint_quartz_box').css("display", "none");
+            });
+
+            $('#carousel-switch').on('slid.bs.carousel', function (event) {
+                var poolName = $('div.item.active').data('pool');
+                window.pool = data.pools[poolName];
+            });
+
+            $().ready(function(){
+                var c = $("canvas#cards-canvas")[0];
+                var ctx = c.getContext("2d");
+                window.imgBg = new Image();
+                window.imgBg.src = "img/background.png";
+                window.summonCounter = 0;
+                // window.saintQuartz = 0
+                window.saintQuartzFree = 0;
+                window.saintQuartzPremium = 0;
+                window.rmbCost = 0;
+                window.pool = data.pools.event_20160411;
+                $('img#banner').attr('src', window.pool.banner);
+
+                // $('span#saint_quartz').text(window.saintQuartz);
+                updateSaintQuartz();
+
+                imgBg.onload = function() {
+                    ctx.drawImage(window.imgBg, 0, 0);
+                }
+            });
+        </script>
+    </body>
+</html>
